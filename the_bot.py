@@ -22,7 +22,7 @@ def get_channel(guild, id):
 @client.event
 async def on_ready():
     print("-\n".join(x.name for x in client.guilds))
-    activity = Game(name="balak playing bhelp")
+    activity = Game(name="balak | bhelp")
     await client.change_presence(activity=activity)
 
 @client.event
