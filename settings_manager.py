@@ -38,7 +38,7 @@ class Settings:
         try:
             return self._js[guild_id][msg_id][emoji]
         except (IndexError, KeyError):
-            print("8h")
+            print("8h", self._js, guild_id, msg_id, emoji)
             return None
     
     def get_ann_channel(self, guild_id: str) -> Union[int, None]:
