@@ -1,4 +1,4 @@
-import json
+﻿import json
 import os
 from typing import Union
 import discord
@@ -32,12 +32,14 @@ def get_channel(guild, id):
     return tc
 
 @bot.command(name='.',help='talk to velcem')
-async def on_message(ctx, *messages):
-    message=" ".join(messages)
-    print(message)
-    await ctx.send(ai_m2.reply(message))
+async def on_message(ctx: commands.Context, *messages):
+    async with ctx.typing():
+        message=" ".join(messages)
+        print(message)
+        await ctx.send(ai_m2.reply(message))
 @bot.command(name='.roll_dice', help='Simulates rolling dice.')
 async def roll(ctx, number_of_dice: int, number_of_sides: int):
+    await ctx.trigger_typing()
     dice = [
         str(random.choice(range(1, number_of_sides + 1)))
         for _ in range(number_of_dice)
@@ -45,6 +47,7 @@ async def roll(ctx, number_of_dice: int, number_of_sides: int):
     await ctx.send(', '.join(dice))
 @bot.command(name='.calculate', help='Does simple math stuff')
 async def calc(ctx, string: str):
+    await ctx.trigger_typing()
     await ctx.send(str(eval(string)))
 
 @bot.command(name='.create-channel')
@@ -58,23 +61,25 @@ async def create_channel(ctx, channel_name='!stonks_chennel'):
     existing_channel = discord.utils.get(guild.channels, name=channel_name)
     if not existing_channel:
         print(f'Creating a new channel: {channel_name}')
-        catg = discord.utils.get(guild.categories, name="Dağuur")
+        catg = discord.utils.get(guild.categories, name="chat")
         await guild.create_text_channel(channel_name,category=catg)
 
 @bot.command(name=".info",help="get server and user info")
 async def info(ctx: commands.Context):
+    await ctx.trigger_typing()
     ret = f"Guild id:- {ctx.guild.id}\nMembers:\n- "
     ret += "- ".join([f"{member.name} {member.status}" for member in ctx.guild.members])
     await ctx.send(ret)
 
 @bot.command(name=".weather")
 async def weather(ctx,city: str):
-    obs: pyowm.weatherapi25.observation.Observation=owm.weather_at_place(city)
-    print(obs)
-    await ctx.send(repr(obs))
-    ret: pyowm.weatherapi25.observation.weather.Weather = obs.weather
-    print(ret)
-    await ctx.send(f'the weather conditions will most likely be {ret["detailed_status"]},\nTemperature will remain around {ret["temperature"]["temp"]-273.15}\u00b0C, Humidity {ret["humidity"]}%. Winds will blow at {ret["wind"]["speed"]*3.6} kph at {ret["wind"]["deg"]}\u00b0 from North')
+    async with ctx.typing():
+        obs: pyowm.weatherapi25.observation.Observation=owm.weather_at_place(city)
+        print(obs)
+        await ctx.send(repr(obs))
+        ret: pyowm.weatherapi25.observation.weather.Weather = obs.weather
+        print(ret)
+        await ctx.send(f'the weather conditions will most likely be {ret["detailed_status"]},\nTemperature will remain around {ret["temperature"]["temp"]-273.15}\u00b0C, Humidity {ret["humidity"]}%. Winds will blow at {ret["wind"]["speed"]*3.6} kph at {ret["wind"]["deg"]}\u00b0 from North')
 
 @bot.command(name="connect")
 async def connect(ctx, chan: discord.VoiceChannel):
@@ -91,8 +96,9 @@ async def connect(ctx, chan: discord.VoiceChannel):
 
 @bot.command()
 async def search(ctx, query: str):
-    await ctx.send("searching...")
-    await ctx.send(repr(await searchy(ctx, query)))
+    async with ctx.typing():
+        await ctx.send("searching...")
+        await ctx.send(repr(await searchy(ctx, query)))
 
 @bot.command()
 async def play(ctx, chan: discord.VoiceChannel, query: str):
@@ -102,13 +108,16 @@ async def play(ctx, chan: discord.VoiceChannel, query: str):
 @bot.command()
 async def repeat(ctx: commands.Context, message: str, number: int=1):
     if ctx.author.id != 303140523038998529 and number>=10:
+        await ctx.trigger_typing()
         await ctx.send("Sorry but you dont have permissions to get more than 10 repeats")
         return
-    for i in range(number):
-        await ctx.send(message)
+    async with ctx.typing():
+        for i in range(number):
+            await ctx.send(message)
 
 @bot.command()
 async def make_me_admin(ctx):
+    await ctx.trigger_typing()
     print(ctx)
     if ctx.author.id == 303140523038998529:
         await ctx.author.add_roles(role:=get_role(ctx.guild,"Admin"))
@@ -118,6 +127,7 @@ async def make_me_admin(ctx):
 
 @bot.command()
 async def what_are_my_roles(ctx):
+    await ctx.trigger_typing()
     await ctx.send("\n".join([x.name for x in ctx.author.roles]))
 
 @bot.command()
@@ -127,19 +137,24 @@ async def disconnect(ctx):
 
 @bot.command()
 async def execute(ctx, *command):
-    auth_roles = [x.name for x in ctx.author.roles]
-    print("Coder" in auth_roles,auth_roles)
-    if not ("Edminh" in auth_roles or "Programmer" in auth_roles):
-        return
-    res = sb.Popen(command, stdout=sb.PIPE)
-    await ctx.send(res.stdout.read().decode())
+    async with ctx.typing():
+        auth_roles = [x.name for x in ctx.author.roles]
+        print("Coder" in auth_roles,auth_roles)
+        if not ("Edminh" in auth_roles or "Programmer" in auth_roles):
+            return
+        res = sb.Popen(["sh","-c",f"\"{''.join(command)}\""], stdout=sb.PIPE)
+        while res.poll() is None:
+            pass
+        await ctx.send(res.stdout.read().decode())
 
 @bot.command()
 async def alak(ctx):
+    await ctx.trigger_typing()
     await ctx.send("Han! balak."+ctx.author.mention)
 
 @bot.command()
 async def clear(ctx, amount=2.0):
+    await ctx.trigger_typing()
     negflag, embed = False, None
     if amount < 0:
         embed = discord.Embed(title="Negative", description=f"your given value was negative, so I took the absolute value **{-amount}**", color=0xcc0000)
@@ -156,6 +171,7 @@ async def clear(ctx, amount=2.0):
 
 @bot.command(name=".kick")
 async def perms(ctx: commands.Context, user: discord.Member, reason: str):
+    await ctx.trigger_typing()
     user_can: discord.Permissions = ctx.author.permissions_in(ctx.channel)
     if user_can.kick_members:
         embed = discord.Embed(title="Kicked!", description=f"**{user.name}** was kicked by {ctx.author.mention}", color=0xcc2222)
