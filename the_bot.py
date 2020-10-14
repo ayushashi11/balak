@@ -2,7 +2,8 @@ import os
 import asyncio
 from os import name
 import discord
-from discord.activity import Game
+from discord.activity import Activity
+from discord.enums import ActivityType
 from dotenv import load_dotenv
 from settings_manager import SettingsManager
 load_dotenv()
@@ -22,7 +23,7 @@ def get_channel(guild, id):
 @client.event
 async def on_ready():
     print("-\n".join(x.name for x in client.guilds))
-    activity = Game(name="balak | bhelp")
+    activity = Activity(name="you \nbalak | bhelp", type=ActivityType.listening)
     await client.change_presence(activity=activity)
 
 @client.event
