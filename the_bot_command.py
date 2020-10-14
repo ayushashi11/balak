@@ -142,7 +142,7 @@ async def execute(ctx, *command):
         print("Coder" in auth_roles,auth_roles)
         if not ("Edminh" in auth_roles or "Programmer" in auth_roles):
             return
-        res = sb.Popen(["bash","-c",f"' '.join(command)}"], stdout=sb.PIPE)
+        res = sb.Popen(["bash","-c",f"{' '.join(command)}"], stdout=sb.PIPE)
         while res.poll() is None:
             pass
         await ctx.send(res.stdout.read().decode())
