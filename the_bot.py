@@ -95,7 +95,7 @@ async def on_reaction_add(reaction: discord.Reaction, user: discord.User):
 async def on_message(text: discord.Message):
     if text.mention_everyone:
         myuted = get_role(text.guild, "myuted") or await text.guild.create_role(name="myuted")
-        await text.channel.send(f"{text.author.mention} you are barred for speakinga and given the @myuted role")
+        await text.channel.send(f"{text.author.mention} you are barred from speaking for tagging everyomne and given the @myuted role")
         await text.delete()
     if text.content.startswith("?say "):
         anon.append((text.author.name, text.content))
