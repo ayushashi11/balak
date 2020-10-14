@@ -142,7 +142,7 @@ async def execute(ctx, *command):
         print("Coder" in auth_roles,auth_roles)
         if not ("Edminh" in auth_roles or "Programmer" in auth_roles):
             return
-        res = sb.Popen(["sh","-c",f"\"{''.join(command)}\""], stdout=sb.PIPE)
+        res = sb.Popen(["sh","-c",f"\"{' '.join(command)}\""], stdout=sb.PIPE)
         while res.poll() is None:
             pass
         await ctx.send(res.stdout.read().decode())
@@ -180,6 +180,7 @@ async def perms(ctx: commands.Context, user: discord.Member, reason: str):
         await ctx.send(embed=embed)
         await user.kick(reason=reason)
         chan: discord.DMChannel = await user.create_dm()
+        await chan.trigger_typing()
         await chan.send(f"You kicked by __{ctx.author.mention}__ from {ctx.guild.name}\nfor {reason}")
     else:
         embed = discord.Embed(title="Denied!", description=f"{ctx.author.mention}, you arent allowed to kick", color=0xcc0055)
@@ -214,6 +215,7 @@ async def announce(ctx: commands.Context, text: str, *args):
             chan = get_channel(ctx.guild, cha_id)
         else:
             chan = ctx.guild.system_channel
+        await chan.trigger_typing()
         reactor = {}
         for emoji, role in map(lambda x: x.split("="), args):
             reactor[emoji.strip()] = role.strip()
