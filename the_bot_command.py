@@ -1,6 +1,6 @@
 ﻿import json
 import os
-from typing import Union
+from typing import Callable, Union
 import discord
 from discord.embeds import Embed
 import pyowm
@@ -23,6 +23,10 @@ owm=OWM(key)
 owm=owm.weather_manager()
 sm = SettingsManager()
 
+def tes(f: Callable) -> Callable:
+    print(f, f.name)
+    return f
+
 def get_role(guild, name):
     tc = discord.utils.find(lambda g: g.name==name, guild.roles)
     return tc
@@ -31,6 +35,7 @@ def get_channel(guild, id):
     tc = discord.utils.find(lambda g: g.id==id, guild.channels)
     return tc
 
+@tes
 @bot.command(name='.',help='talk to velcem')
 async def on_message(ctx: commands.Context, *messages):
     async with ctx.typing():
@@ -128,7 +133,7 @@ async def make_me_admin(ctx):
 @bot.command()
 async def what_are_my_roles(ctx):
     await ctx.trigger_typing()
-    await ctx.send("\n".join([x.name for x in ctx.author.roles]))
+    await ctx.send("\n".join([x.name.lsrtip("@") for x in ctx.author.roles]))
 
 @bot.command()
 async def disconnect(ctx):
@@ -239,7 +244,11 @@ async def please_unmute(ctx: commands.Context):
             await cha.send(f"**Alert __Admins__**,\n {ctx.author.mention} wants to be unmuted, if his punishment is complete please unmute him")
         else:
             await guild.system_channel.send(f"**Alert __Admins__**,\n {ctx.author.mention} wants to be unmuted, if his punishment is complete please unmute him")
-        
+
+@bot.command()
+async def test(ctx: commands.Context):
+    async for entry in ctx.guild.audit_logs(limit=100):
+        print(entry.__dict__)
 
 @connect.error
 async def error(ctx, error):

@@ -97,12 +97,13 @@ async def on_message(text: discord.Message):
         myuted = get_role(text.guild, "myuted") or await text.guild.create_role(name="myuted")
         await text.channel.send(f"{text.author.mention} you are barred from speaking for tagging everyomne and given the @myuted role")
         await text.delete()
+        await text.author.add_roles(myuted)
     if text.content.startswith("?say "):
         anon.append((text.author.name, text.content))
     if text.content.lower().strip() == "who_used_anonimity":
         embed = Embed(
             title="Who went anonymous eh?",
-            description="\n--------\n".join([f"__{t[0]}__ said {t[1].replace('_','\_')}" for t in anon[:-10]]),
+            description="\n--------\n".join([f"__{t[0]}__ said "+t[1].replace('_','\\_') for t in anon[:-10]]),
             color=0x0000ff)
         await text.channel.send(embed=embed)
     roles = [x.name for x in text.author.roles]
