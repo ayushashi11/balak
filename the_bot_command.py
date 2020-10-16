@@ -35,7 +35,6 @@ def get_channel(guild, id):
     tc = discord.utils.find(lambda g: g.id==id, guild.channels)
     return tc
 
-@tes
 @bot.command(name='.',help='talk to velcem')
 async def on_message(ctx: commands.Context, *messages):
     async with ctx.typing():
@@ -133,7 +132,7 @@ async def make_me_admin(ctx):
 @bot.command()
 async def what_are_my_roles(ctx):
     await ctx.trigger_typing()
-    await ctx.send("\n".join([x.name.lsrtip("@") for x in ctx.author.roles]))
+    await ctx.send("\n".join([x.name.lstrip("@") for x in ctx.author.roles]))
 
 @bot.command()
 async def disconnect(ctx):
