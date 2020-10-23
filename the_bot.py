@@ -6,14 +6,18 @@ from discord.activity import Activity
 from discord.embeds import Embed
 from discord.enums import ActivityType
 from discord.permissions import Permissions
+from typing import Deque, Union, Tuple
 from dotenv import load_dotenv
+from collections import deque
 from settings_manager import SettingsManager
 load_dotenv()
 TOKEN="NzQ5NjQwMDIyNzUxMTgyODY4.X0u6rQ.1chmygOPmi8ZqzO2Aiqx3Kqs7vE"
 client = discord.Client()
-anon=[]
 o = True
 sm = SettingsManager()
+str_or_None = Union[str, None]
+lis: Deque[Tuple[str_or_None, str_or_None]] = deque([(None,None)]*100, maxlen=100)
+
 
 def get_role(guild, name) -> discord.Role:
     tc = discord.utils.find(lambda g: g.name==name, guild.roles)
@@ -98,12 +102,10 @@ async def on_message(text: discord.Message):
         await text.channel.send(f"{text.author.mention} you are barred from speaking for tagging everyomne and given the @myuted role")
         await text.delete()
         await text.author.add_roles(myuted)
-    if text.content.startswith("?say "):
-        anon.append((text.author.name, text.content))
-    if text.content.lower().strip() == "who_used_anonimity":
+    if text.content.lower().strip() == "balak who_used_?say":
         embed = Embed(
             title="Who went anonymous eh?",
-            description="\n--------\n".join([f"__{t[0]}__ said "+t[1].replace('_','\\_') for t in anon[:-10]]),
+            description="\n--------\n".join(f"__{t[0]}__ said "+t[1].replace('_','\\_') for t in lis if t!=(None,None)),
             color=0x0000ff)
         await text.channel.send(embed=embed)
     roles = [x.name for x in text.author.roles]
@@ -111,6 +113,12 @@ async def on_message(text: discord.Message):
         await text.channel.send(f"{text.author.mention} you are barred from speaking since you have the @myuted role ask admins to remove it by saying bplease_unmute")
         if text.content.strip() != "bplease_unmute":
             await text.delete()
+
+@client.event
+async def on_message_delete(text: discord.Message):
+    global lis
+    if text.content.startswith("?say "):
+        lis.append((text.author.name, text.content[5:]))
 
 client.run(TOKEN)
 
