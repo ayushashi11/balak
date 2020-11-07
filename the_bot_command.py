@@ -3,6 +3,7 @@ import os
 from typing import Callable, Union
 import discord
 from discord.embeds import Embed
+from discord.ext.commands.core import command
 import pyowm
 import pyowm.weatherapi25.observation
 import ai_m2
@@ -23,6 +24,11 @@ owm=OWM(key)
 owm=owm.weather_manager()
 sm = SettingsManager()
 
+def get_bool(s: str) -> bool:
+    if s.lower() in ["t", "true", "yes", "y", "enable", "on"]:
+        return True
+    return False
+
 def tes(f: Callable) -> Callable:
     print(f, f.name)
     return f
@@ -35,13 +41,17 @@ def get_channel(guild, id):
     tc = discord.utils.find(lambda g: g.id==id, guild.channels)
     return tc
 
-@bot.command(name='.',help='talk to velcem')
+async def error(ctx, error):
+    print(error)
+    await ctx.send(f"{error}")
+
+@bot.command(name='.',help='talk to velcem', )
 async def on_message(ctx: commands.Context, *messages):
     async with ctx.typing():
         message=" ".join(messages)
         print(message)
         await ctx.send(ai_m2.reply(message))
-@bot.command(name='.roll_dice', help='Simulates rolling dice.')
+@bot.command(name='.roll_dice', help='Simulates rolling dice.', )
 async def roll(ctx, number_of_dice: int, number_of_sides: int):
     await ctx.trigger_typing()
     dice = [
@@ -139,17 +149,17 @@ async def disconnect(ctx):
     vc=ctx.voice_client
     await vc.disconnect()
 
-@bot.command()
-async def execute(ctx, *command):
-    async with ctx.typing():
-        auth_roles = [x.name for x in ctx.author.roles]
-        print("Coder" in auth_roles,auth_roles)
-        if not ("Edminh" in auth_roles or "Programmer" in auth_roles):
-            return
-        res = sb.Popen(["bash","-c",f"{' '.join(command)}"], stdout=sb.PIPE)
-        while res.poll() is None:
-            pass
-        await ctx.send(res.stdout.read().decode())
+#@bot.command()
+#async def execute(ctx, *command):
+#    async with ctx.typing():
+#        auth_roles = [x.name for x in ctx.author.roles]
+#        print("Coder" in auth_roles,auth_roles)
+#        if not ("Edminh" in auth_roles or "Programmer" in auth_roles):
+#            return
+#        res = sb.Popen(["bash","-c",f"{' '.join(command)}"], stdout=sb.PIPE)
+#        while res.poll() is None:
+#            pass
+#        await ctx.send(res.stdout.read().decode())
 
 @bot.command()
 async def alak(ctx):
@@ -207,6 +217,12 @@ async def settings(ctx: commands.Context, *args):
                     print(c)
                     s.set_ann_channel(ctx.guild.id, c)
                     await ctx.send("**Done!**")
+                elif key == "welcome":
+                    s.set_greet(ctx.guild.id, get_bool(value))
+                    await ctx.send("**Done!**")
+                elif key == "mute on ping":
+                    s.set_mute_everyone(ctx.guild.id, get_bool(value))
+                    await ctx.send("**Done!**")
                 else:
                     embed = discord.Embed(title="Error!", description=f"incorrect key!", color=0xcc0055)
                     await ctx.send(embed=embed)
@@ -230,7 +246,7 @@ async def announce(ctx: commands.Context, text: str, *args):
         s.add_reactor_channel(str(ctx.guild.id), str(msg.id), reactor)
 
 @bot.command(name=".report", aliases=[".r", "r"])
-async def test(ctx,text: discord.Message):
+async def report(ctx,text: discord.Message):
     await text.add_reaction("😠")
 
 @bot.command()
@@ -248,9 +264,10 @@ async def please_unmute(ctx: commands.Context):
 async def test(ctx: commands.Context):
     async for entry in ctx.guild.audit_logs(limit=100):
         print(entry.__dict__)
+    await ctx.send("***This is a testing/ developement command, if you aren't the developers of this don't use it***")
+    raise BaseException("lol")
 
-@connect.error
-async def error(ctx, error):
-    await ctx.send(error)
+for command in bot.commands:
+    command.error(error)
 
 bot.run(TOKEN)

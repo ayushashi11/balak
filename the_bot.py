@@ -44,12 +44,14 @@ async def on_ready():
 
 @client.event
 async def on_member_join(member: discord.Member):
-    g: discord.Guild = member.guild
-    channel: discord.TextChannel = g.system_channel
-    embed = discord.Embed(title="Welcome!", description="Welcome "+member.mention)
-    embed.set_thumbnail(url=member.avatar_url)
-    await channel.send(embed=embed)
-    await member.create_dm()
+    with sm as s:
+        g: discord.Guild = member.guild
+        if s.get_greet(str(g.id)):
+            channel: discord.TextChannel = g.system_channel
+            embed = discord.Embed(title="Welcome!", description="Welcome "+member.mention)
+            embed.set_thumbnail(url=member.avatar_url)
+            await channel.send(embed=embed)
+            await member.create_dm()
 
 @client.event
 async def on_invite_create(invite):
@@ -97,11 +99,12 @@ async def on_reaction_add(reaction: discord.Reaction, user: discord.User):
 
 @client.event
 async def on_message(text: discord.Message):
-    if text.mention_everyone:
+    if text.mention_everyone and sm.__enter__().get_mute_everyone(str(text.guild.id)):
         myuted = get_role(text.guild, "myuted") or await text.guild.create_role(name="myuted")
         await text.channel.send(f"{text.author.mention} you are barred from speaking for tagging everyomne and given the @myuted role")
         await text.delete()
         await text.author.add_roles(myuted)
+        sm.__exit__()
     if text.content.lower().strip() == "balak who_used_?say":
         embed = Embed(
             title="Who went anonymous eh?",

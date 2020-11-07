@@ -25,6 +25,28 @@ class Settings:
         else:
             self._js[guild_id] = {"announcementchannel": chan_id}
     
+    def get_greet(self, guild_id: str) -> Union[bool, None]:
+        try:
+            return self._js[guild_id]["greet"]
+        except (IndexError, KeyError):
+            return None
+    def set_greet(self, guild_id: str, greet: bool) -> None:
+        if guild_id in self._js:
+            self._js[guild_id]["greet"] = greet
+        else:
+            self._js[guild_id] = {"greet": greet}
+    
+    def get_mute_everyone(self, guild_id: str) -> Union[bool, None]:
+        try:
+            return self._js[guild_id]["mute"]
+        except (IndexError, KeyError):
+            return None
+    def set_mute_everyone(self, guild_id: str, greet: bool) -> None:
+        if guild_id in self._js:
+            self._js[guild_id]["mute"] = greet
+        else:
+            self._js[guild_id] = {"mute": greet}
+    
     def add_reactor_channel(self, guild_id: str, msg_id: str, reactions: dict) -> None:
         if guild_id in self._js:
             try:
