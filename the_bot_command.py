@@ -126,8 +126,8 @@ async def search(ctx, query: str):
         await ctx.send(repr(await searchy(ctx, query)))
 
 @bot.command()
-async def play(ctx, chan: discord.VoiceChannel, query: str):
-    await search(ctx, query)
+async def play(ctx, chan: discord.VoiceChannel, query: str, key: str=""):
+    await search(ctx, query, key)
     await connect(ctx, chan)
 
 @bot.command()
