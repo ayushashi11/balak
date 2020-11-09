@@ -43,6 +43,9 @@ def get_channel(guild, id):
 
 async def error(ctx, error):
     print(error)
+    em=Embed(title="Error!", description='*The following error has occured **'+repr(error).replace('*','\\*')+'**', url="https://discord.gg/VXFsKzf", color=0xff0000)
+    if not isinstance(error, commands.ArgumentParsingError):
+        em.set_footer(text="**Please report this to the dev**\nClick on the title to get the report server invite")
     await ctx.send(f"{error}")
 
 @bot.command(name='.',help='talk to velcem', )
@@ -217,7 +220,7 @@ async def settings(ctx: commands.Context, *args):
                     print(c)
                     s.set_ann_channel(ctx.guild.id, c)
                     await ctx.send("**Done!**")
-                elif key == "welcome":
+                elif key == "greet":
                     s.set_greet(ctx.guild.id, get_bool(value))
                     await ctx.send("**Done!**")
                 elif key == "mute on ping":
