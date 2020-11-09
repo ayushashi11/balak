@@ -250,7 +250,7 @@ async def announce(ctx: commands.Context, text: str, *args):
         reactor = {}
         for emoji, role in map(lambda x: x.split("="), args):
             reactor[emoji.strip()] = role.strip()
-        embed = Embed(title=f"Announcement by {ctx.author.mention}", description=text, color=0x0000ff)
+        embed = Embed(title=f"Announcement by {ctx.author.name}", description=text, color=0x0000ff)
         embed.add_field(name="Reactions", value="\n\t".join(args) or "none")
         msg: discord.Message = await chan.send(embed=embed)
         print(msg, reactor)
