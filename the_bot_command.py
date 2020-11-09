@@ -280,7 +280,7 @@ async def test(ctx: commands.Context):
 
 @bot.command(aliases=[".v"])
 async def version(ctx):
-    await ctx.send("1.0.7")
+    await ctx.send("1.0.8")
 
 for command in bot.commands:
     command.error(error)
