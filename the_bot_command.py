@@ -91,6 +91,13 @@ async def info(ctx: commands.Context):
 
 @bot.command(name=".weather")
 async def weather(ctx,city: str):
+    ctx.send(
+        embed=Embed(
+            title="This command is under testing",
+            description="due to the recent updates to the Open Weather api,  the bot's weather api is broken, but still a new api is under work",
+            color=0x0000ff
+        )
+    )
     async with ctx.typing():
         obs: pyowm.weatherapi25.observation.Observation=owm.weather_at_place(city)
         print(obs)
