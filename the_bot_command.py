@@ -46,7 +46,7 @@ async def error(ctx, error):
     em=Embed(title="Error!", description='*The following error has occured **'+repr(error).replace('*','\\*')+'**', url="https://discord.gg/VXFsKzf", color=0xff0000)
     if not isinstance(error, commands.ArgumentParsingError):
         em.set_footer(text="**Please report this to the dev**\nClick on the title to get the report server invite")
-    await ctx.send(f"{error}")
+    await ctx.send(embed=em)
 
 @bot.command(name='.',help='talk to velcem', )
 async def on_message(ctx: commands.Context, *messages):
