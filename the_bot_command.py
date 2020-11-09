@@ -4,6 +4,7 @@ from typing import Callable, Union
 import discord
 from discord.embeds import Embed
 from discord.ext.commands.core import command
+from discord.ext.commands.errors import MissingAnyRole, MissingPermissions, MissingRole
 import pyowm
 import pyowm.weatherapi25.observation
 import ai_m2
@@ -43,8 +44,8 @@ def get_channel(guild, id):
 
 async def error(ctx, error):
     print(error)
-    em=Embed(title="Error!", description='*The following error has occured **'+repr(error).replace('*','\\*')+'**', url="https://discord.gg/VXFsKzf", color=0xff0000)
-    if not isinstance(error, commands.ArgumentParsingError):
+    em=Embed(title="Error!", description='*The following error has occured* **'+repr(error).replace('*','\\*')+'**', url="https://discord.gg/VXFsKzf", color=0xff0000)
+    if not isinstance(error, commands.ArgumentParsingError) or isinstance(error, commands.MissingRequiredArgument) or isinstance(error, MissingRole) or isinstance(error, MissingAnyRole) or isinstance(error, MissingPermissions):
         em.set_footer(text="**Please report this to the dev**\nClick on the title to get the report server invite")
     await ctx.send(embed=em)
 
