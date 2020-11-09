@@ -91,7 +91,7 @@ async def info(ctx: commands.Context):
 
 @bot.command(name=".weather")
 async def weather(ctx,city: str):
-    ctx.send(
+    await ctx.send(
         embed=Embed(
             title="This command is under testing",
             description="due to the recent updates to the Open Weather api,  the bot's weather api is broken, but still a new api is under work",
@@ -251,7 +251,7 @@ async def announce(ctx: commands.Context, text: str, *args):
         for emoji, role in map(lambda x: x.split("="), args):
             reactor[emoji.strip()] = role.strip()
         embed = Embed(title=f"Announcement by {ctx.author.mention}", description=text, color=0x0000ff)
-        embed.add_field(name="Reactions", value="\n\t".join(args))
+        embed.add_field(name="Reactions", value="\n\t".join(args) or "none")
         msg: discord.Message = await chan.send(embed=embed)
         print(msg, reactor)
         s.add_reactor_channel(str(ctx.guild.id), str(msg.id), reactor)
