@@ -1,9 +1,2 @@
-truncatesources: true
-cleancache: true
-keys:
-- https://example.com/public.key
-repos:
-- deb http://apt.example.com stable main
 packages:
-- ascii
-- libxml
+  - ffmpeg
