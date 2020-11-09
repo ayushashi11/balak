@@ -45,7 +45,7 @@ def get_channel(guild, id):
 async def error(ctx, error):
     print(error)
     em=Embed(title="Error!", description='*The following error has occured* **'+repr(error).replace('*','\\*')+'**', url="https://discord.gg/VXFsKzf", color=0xff0000)
-    if not isinstance(error, commands.ArgumentParsingError) or isinstance(error, commands.MissingRequiredArgument) or isinstance(error, MissingRole) or isinstance(error, MissingAnyRole) or isinstance(error, MissingPermissions):
+    if not (isinstance(error, commands.ArgumentParsingError) or isinstance(error, commands.MissingRequiredArgument) or isinstance(error, MissingRole) or isinstance(error, MissingAnyRole) or isinstance(error, MissingPermissions)):
         em.set_footer(text="**Please report this to the dev**\nClick on the title to get the report server invite")
     await ctx.send(embed=em)
 
@@ -270,6 +270,10 @@ async def test(ctx: commands.Context):
         print(entry.__dict__)
     await ctx.send("***This is a testing/ developement command, if you aren't the developers of this don't use it***")
     raise BaseException("lol")
+
+@bot.command(aliases=[".v"])
+async def version(ctx):
+    await ctx.send("1.0.7")
 
 for command in bot.commands:
     command.error(error)
