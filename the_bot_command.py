@@ -278,9 +278,25 @@ async def test(ctx: commands.Context):
     await ctx.send("***This is a testing/ developement command, if you aren't the developers of this don't use it***")
     raise BaseException("lol")
 
-@bot.command(aliases=[".v"])
-async def version(ctx):
-    await ctx.send("1.0.9")
+class Miscellaneous:
+    @bot.command(aliases=[".v"])
+    async def version(ctx):
+        await ctx.send("1.0.9")
+
+    @bot.command(aliases=["inv",".inv",".invite"])
+    async def invite(ctx):
+        em=Embed(title="Invite Balak[click here for instant invite]", description="to invite balak open the following \/ link in your browser or click the title\nhttps://top.gg/bot/749640022751182868/invite", url="https://top.gg/bot/749640022751182868/invite")
+        await ctx.send(embed=em)
+    @bot.command(aliases=[".vote"])
+    async def vote(ctx):
+        em=Embed(title="Vote Balak[click here for instant link]", description="to vote balak open the following \/ link in your browser or click the title\nhttps://top.gg/bot/749640022751182868/vote", url="https://top.gg/bot/749640022751182868/vote")
+        await ctx.send(embed=em)
+    @bot.command(aliases=[".vote"])
+    async def vote(ctx):
+        em=Embed(title="Source code of Balak[click here for instant link]", description="to view balak's source open the following \/ link in your browser or click the title\nhttps://github.com/ayushashi11/balak", url="https://github.com/ayushashi11/balak")
+        await ctx.send(embed=em)
+
+bot.add_cog(Miscellaneous())
 
 for command in bot.commands:
     command.error(error)

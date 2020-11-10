@@ -36,11 +36,14 @@ async def on_ready():
     for guild in client.guilds:
         role = get_role(guild, "balak")
         if role is None:
-            role = await guild.create_role(name="balak")
-            role.permissions = Permissions.administrator
-            chan: discord.TextChannel = guild.system_channel or guild.channels[0]
-            await chan.send(f"admins please gimme {role.mention} role or i wont work properly!")
-        role.position = len(guild.roles)
+            try:
+                role = await guild.create_role(name="balak")
+                role.permissions = Permissions.administrator
+                chan: discord.TextChannel = guild.system_channel or guild.channels[0]
+                await chan.send(f"admins please gimme {role.mention} role or i cant work properly!")
+            except PermissionError:
+                chan: discord.TextChannel = guild.system_channel or guild.channels[0]
+                await chan.send("admins please gimme a role named balak with administrator permissions (maybe place it below admin) or i cant work properly!")
 
 @client.event
 async def on_member_join(member: discord.Member):

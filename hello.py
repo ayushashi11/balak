@@ -79,6 +79,10 @@ def put_visitor():
         print('No database')
         return jsonify(data)
 
+@app.route('/settings.json')
+def settings():
+    return jsonify({'text': open("settings.json").read()})
+
 @atexit.register
 def shutdown():
     if client:
