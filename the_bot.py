@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from collections import deque
 from settings_manager import SettingsManager
 load_dotenv()
-TOKEN="NzQ5NjQwMDIyNzUxMTgyODY4.X0u6rQ.1chmygOPmi8ZqzO2Aiqx3Kqs7vE"
+TOKEN=os.getenv("TOKEN")
 client = discord.Client()
 o = True
 sm = SettingsManager()

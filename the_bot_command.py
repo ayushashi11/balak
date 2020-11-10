@@ -16,11 +16,11 @@ from math import *
 from dotenv import load_dotenv
 from youtube import search as searchy, subprocess as sb
 load_dotenv()
-TOKEN="NzQ5NjQwMDIyNzUxMTgyODY4.X0u6rQ.1chmygOPmi8ZqzO2Aiqx3Kqs7vE"
+TOKEN=os.getenv("TOKEN")
 bot = commands.Bot(command_prefix='b')
 r=random.random
 #DB=int(os.getenv("DBID"))
-key="2223ec0573fa9465ff0aeff7557ccfc8"
+key=os.getenv("KEY")
 owm=OWM(key)
 owm=owm.weather_manager()
 sm = SettingsManager()
