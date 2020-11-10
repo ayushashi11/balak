@@ -27,7 +27,7 @@ try:
 except BaseException as e:
       print(e.args)
 print('setting up...')
-key="2223ec0573fa9465ff0aeff7557ccfc8"
+key=os.getenv("KEY")
 owm=OWM(key)
 owm=owm.weather_manager()
 sadface="😔 😟 ☹ 🥺 😢 😭 😞 😣 😖 😓 😩 😫".split()
